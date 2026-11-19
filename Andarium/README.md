@@ -122,6 +122,15 @@ every screen is laid out as on an iPad of the same size and shape.
   on its edge and the statistics and notices at its top. Bent, the device
   stands like a laptop: the guest is the upper half and the lower half is a
   deck with the keys in one row and the statistics and notices above them.
+- **The whole inner display.** Held upright, flat or bent, and turned flat,
+  the guest takes the whole inner display, the strip the home indicator keeps
+  at its foot included (`FoldReading.sessionGuestArea`): a run defers every
+  edge's system gestures (`SessionGestureDeferral`), so a touch there reaches
+  Android. The deck and the statistics stay in the safe area. Settings' "Use
+  the whole inner screen" (on for a fresh install, kept as
+  `WholeInnerDisplayPreference`, shown only on a folding iPhone, with an info
+  button saying so) turns it off, and the guest then stays above the strip as
+  on an iPhone; the change resizes Android at once.
 - **Other screens.** Bent, Home is one page each side of the fold; flat it is
   Home as on an iPad, one scrolling list with Start at the foot of the screen.
   Flat, Welcome, the boot, the busy, low-space and end cards, and the cards

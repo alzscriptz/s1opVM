@@ -166,6 +166,9 @@ struct AppEntry {
         // unless the launch is a harness's, which decides for its run alone
         // (`StatsPreference.launch`). An App Store build carries no setting.
         let stats = StatsPreference().launch(for: launch)
+        // Whether the guest takes the whole inner screen of a folding iPhone
+        // is the person's last choice.
+        model.wholeInnerDisplay = WholeInnerDisplayPreference().isOn
         model.session.showStats = stats.showOnScreen
         model.statsDecidedByLaunch = !stats.keepsChanges
         // "Use the pointer as touch" is the person's last choice, unless the

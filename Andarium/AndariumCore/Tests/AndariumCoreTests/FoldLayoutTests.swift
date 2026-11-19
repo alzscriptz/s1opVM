@@ -147,6 +147,18 @@ struct FoldPoseTests {
         #expect(reading(.cover).sessionSafeArea == rect(0, 0, 382, 644))
         #expect(reading(.cover, statusBarHidden: false).sessionSafeArea == rect(0, 0, 382, 644))
     }
+
+    @Test func onTheInnerDisplayTheGuestMayTakeTheWholeDisplayHomeIndicatorStripIncluded() {
+        // Home and the session agree, whatever the status bar does.
+        for pose in [Pose.upright(bent: true), .upright(bent: false), .turned(bent: true), .turned(bent: false)] {
+            #expect(reading(pose).sessionGuestArea == reading(pose).window)
+            #expect(reading(pose, statusBarHidden: false).sessionGuestArea == reading(pose).window)
+        }
+        // The cover keeps its safe area: the camera's strip and the home
+        // indicator, as an iPhone does.
+        #expect(reading(.cover).sessionGuestArea == rect(0, 0, 382, 644))
+        #expect(reading(.coverLeadingStrip).sessionGuestArea == rect(84, 0, 594, 432))
+    }
 }
 
 struct SessionPlanTests {
@@ -193,7 +205,7 @@ struct SessionPlanTests {
     @Test(arguments: [true, false])
     func heldUprightTheGuestSpansBothHalvesBentOrFlat(bent: Bool) throws {
         let plan = try plan(.upright(bent: bent))
-        #expect(plan.guest == rect(0, 0, 951, 635))
+        #expect(plan.guest == rect(0, 0, 951, 669))
         #expect(plan.keys == .edge)
     }
 
@@ -201,7 +213,7 @@ struct SessionPlanTests {
         // Bent, beside the keys and clear of the fold's band and its margins;
         // flat, from the top of the display as on an iPad.
         #expect(try plan(.upright(bent: true)).hud == rect(495.5, 0, 455.5, 635))
-        #expect(try plan(.upright(bent: false)).hud == rect(0, 0, 951, 635))
+        #expect(try plan(.upright(bent: false)).hud == rect(0, 0, 951, 669))
     }
 
     @Test func bendingTheHingeHeldUprightNeverResizesTheGuest() throws {
@@ -217,7 +229,7 @@ struct SessionPlanTests {
 
     @Test func turnedAndFlatTheSessionIsLaidOutAsOnAnIPad() throws {
         let plan = try plan(.turned(bent: false))
-        #expect(plan.guest == rect(0, 0, 669, 917))
+        #expect(plan.guest == rect(0, 0, 669, 951))
         #expect(plan.keys == .edge)
         #expect(plan.hud == plan.guest)
     }
@@ -284,11 +296,29 @@ struct SessionPlanTests {
         #expect(SessionPlan.resizesGuest(from: nil, to: cover))
     }
 
+    @Test func withoutTheWholeInnerScreenTheGuestStaysAboveTheHomeIndicator() throws {
+        // Settings' "Use the whole inner screen" off: the layout before it.
+        func plan(_ pose: Pose) throws -> SessionPlan {
+            try #require(SessionPlan(reading(pose), wholeInnerDisplay: false))
+        }
+        #expect(try plan(.upright(bent: false)).guest == rect(0, 0, 951, 635))
+        #expect(try plan(.upright(bent: true)).guest == rect(0, 0, 951, 635))
+        #expect(try plan(.turned(bent: false)).guest == rect(0, 0, 669, 917))
+        #expect(try plan(.turned(bent: false)).hud == rect(0, 0, 669, 917))
+        // Standing and on the cover nothing changes either way.
+        #expect(try plan(.turned(bent: true)) == self.plan(.turned(bent: true)))
+        #expect(try plan(.cover) == self.plan(.cover))
+        // Turning it on or off resizes Android.
+        #expect(SessionPlan.resizesGuest(from: try plan(.upright(bent: false)), to: try self.plan(.upright(bent: false))))
+    }
+
     @Test func theGuestsSizeInEachPoseIsWhatAndroidIsToldAt160DotsAPoint() throws {
-        // Android sees sw382, sw951 (635 tall) and sw669 (917 or 455.5 tall).
+        // Android sees sw382, sw951 (669 tall) and sw669 (951 or 455.5 tall):
+        // on the inner display the whole display, the home indicator's strip
+        // included.
         #expect(try plan(.cover).guest.size == CGSize(width: 382, height: 644))
-        #expect(try plan(.upright(bent: true)).guest.size == CGSize(width: 951, height: 635))
-        #expect(try plan(.turned(bent: false)).guest.size == CGSize(width: 669, height: 917))
+        #expect(try plan(.upright(bent: true)).guest.size == CGSize(width: 951, height: 669))
+        #expect(try plan(.turned(bent: false)).guest.size == CGSize(width: 669, height: 951))
         #expect(try plan(.turned(bent: true)).guest.size == CGSize(width: 669, height: 455.5))
     }
 }

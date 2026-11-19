@@ -5,8 +5,8 @@ import Foundation
 import Observation
 
 /// Keeps what the person sets across launches: the display options chosen on
-/// Home, Settings' "Show on screen", "Use the pointer as touch" and "When hot"
-/// and Home's JIT row. Each is written when it changes. A
+/// Home, Settings' "Show on screen", "Use the pointer as touch", "When hot" and
+/// "Use the whole inner screen" and Home's JIT row. Each is written when it changes. A
 /// value the launch decided for its own run is not written, so a harness
 /// launch never replaces what the person stored (`AppModel.displayOptionsToKeep`,
 /// `showStatsToKeep`).
@@ -33,6 +33,8 @@ final class PreferenceKeeper {
         if let on = model.showStatsToKeep { StatsPreference(defaults: defaults).keep(on) }
         if let on = model.pointerAsTouchToKeep { PointerPreference(defaults: defaults).keep(on) }
         if let on = model.heatLimitToKeep { HeatLimitPreference(defaults: defaults).keep(on) }
+        let whole = WholeInnerDisplayPreference(defaults: defaults)
+        if whole.isOn != model.wholeInnerDisplay { whole.keep(model.wholeInnerDisplay) }
         #if !APP_STORE
         if let on = model.jitToKeep { JitPreference(defaults: defaults).keep(on) }
         #endif
@@ -42,6 +44,7 @@ final class PreferenceKeeper {
         guard let model else { return }
         withObservationTracking {
             _ = (model.displayOptionsToKeep, model.showStatsToKeep, model.pointerAsTouchToKeep, model.heatLimitToKeep)
+            _ = model.wholeInnerDisplay
             #if !APP_STORE
             _ = model.jitToKeep
             #endif

@@ -234,7 +234,11 @@ final class AppModel {
     /// Where the scene is: `.plain` unless the display folds.
     var foldPose: FoldPose { fold?.pose ?? .plain }
     /// The session's layout on a folding display; nil elsewhere.
-    var sessionPlan: SessionPlan? { fold.flatMap(SessionPlan.init) }
+    var sessionPlan: SessionPlan? { fold.flatMap { SessionPlan($0, wholeInnerDisplay: wholeInnerDisplay) } }
+    /// Settings' "Use the whole inner screen" on a folding iPhone: the guest
+    /// takes the strip the home indicator keeps too. Kept for the install
+    /// (`WholeInnerDisplayPreference`).
+    var wholeInnerDisplay = true
 
     var sessionPreset = SessionPreset()
     var session = SessionState() {

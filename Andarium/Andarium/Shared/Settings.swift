@@ -22,6 +22,8 @@ struct SessionSettingsSheet: View {
     @State private var detent: PresentationDetent
     /// The Old app compatibility page is pushed.
     @State private var oldAppsOpen = false
+    /// The note beside "Use the whole inner screen" is up.
+    @State private var wholeInnerDisplayInfo = false
 
     init(large: Bool) {
         _detent = State(initialValue: large ? .large : .medium)
@@ -38,6 +40,7 @@ struct SessionSettingsSheet: View {
                     // The thermal session runs in a normal run; Recovery has no HAL.
                     if normalSession { PerformanceSection() }
                     if model.host.supportsPointer { pointer }
+                    if model.foldPose.folds { innerScreen }
                     #if !APP_STORE
                     if let probe = model.inputProbe { inputProbe(probe) }
                     #endif
@@ -420,6 +423,38 @@ struct SessionSettingsSheet: View {
             .background(Color(.tertiarySystemFill), in: .rect(cornerRadius: 12, style: .continuous))
         }
         .padding(.vertical, 4)
+    }
+
+    // MARK: Inner screen
+
+    /// On a folding iPhone, whether the guest takes the whole inner screen,
+    /// the strip the home indicator keeps included (`SessionPlan`).
+    private var innerScreen: some View {
+        Section {
+            Toggle(isOn: Binding(get: { model.wholeInnerDisplay }, set: { on in
+                withAnimation(.snappy) { model.wholeInnerDisplay = on }
+            })) {
+                HStack(spacing: 6) {
+                    rowLabel("Use the whole inner screen", symbol: "rectangle.inset.filled")
+                    Button {
+                        wholeInnerDisplayInfo = true
+                    } label: {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.secondary)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel("About Use the whole inner screen")
+                    .accessibilityIdentifier("wholeInnerDisplayInfo")
+                    .popover(isPresented: $wholeInnerDisplayInfo) {
+                        Text("Available for iPhone Duo")
+                            .font(.subheadline)
+                            .padding()
+                            .presentationCompactAdaptation(.popover)
+                    }
+                }
+            }
+            .accessibilityIdentifier("wholeInnerDisplay")
+        }
     }
 
     // MARK: Pointer

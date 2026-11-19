@@ -1416,6 +1416,29 @@
         }
       }
     },
+    "About Use the whole inner screen" : {
+      "comment" : "VoiceOver label of the info button beside “Use the whole inner screen”.",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "「内側の画面全体を使用」について"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "关于“使用整个内屏”"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "關於「使用整個內螢幕」"
+          }
+        }
+      }
+    },
     "Accessibility" : {
       "localizations" : {
         "ja" : {
@@ -2839,6 +2862,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "至少%@"
+          }
+        }
+      }
+    },
+    "Available for iPhone Duo" : {
+      "comment" : "Note beside “Use the whole inner screen”: the switch exists on the iPhone Duo only.",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "iPhone Duoで利用可能"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "适用于iPhone Duo"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "適用於iPhone Duo"
           }
         }
       }
@@ -12509,6 +12555,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "將指標用作觸控"
+          }
+        }
+      }
+    },
+    "Use the whole inner screen" : {
+      "comment" : "Switch on a folding iPhone: the virtual machine's screen also covers the strip at the bottom of the inner display, where the home indicator is.",
+      "localizations" : {
+        "ja" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "内側の画面全体を使用"
+          }
+        },
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用整个内屏"
+          }
+        },
+        "zh-Hant" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "使用整個內螢幕"
           }
         }
       }

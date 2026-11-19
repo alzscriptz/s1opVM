@@ -72,14 +72,27 @@ public struct FoldReading: Equatable, Sendable {
     /// The safe area a session has. The session hides the status bar, and the
     /// inner display's status bar and the safe area it takes go with it; the
     /// home indicator stays. The cover keeps the strip beside its camera
-    /// whatever the application asks. It is the safe area the guest's display
-    /// is laid out in, whichever screen the reading was made on, so Home can
-    /// state the display the next start gives.
+    /// whatever the application asks. It is the same whichever screen the
+    /// reading was made on, so Home can state the display the next start
+    /// gives; Andarium's own pieces in a session are laid out in it, and the
+    /// guest's display in `sessionGuestArea`.
     public var sessionSafeArea: CGRect {
         guard pose.isInner else { return safeArea }
         var area = window
         area.size.height = max(0, safeArea.maxY - window.minY)
         return area
+    }
+
+    /// The area the guest's display may take in a session. On the inner
+    /// display it is the whole display: the status bar is hidden, and the
+    /// strip the home indicator keeps at the foot of the safe area goes to the
+    /// guest too, as the display's edges do on an iPad, since a run defers
+    /// every edge's system gestures (`SessionGestureDeferral`) and a touch
+    /// there reaches the guest. Andarium's own pieces stay in
+    /// `sessionSafeArea`. The cover keeps its safe area, beside its camera's
+    /// strip and above the home indicator, as an iPhone does.
+    public var sessionGuestArea: CGRect {
+        pose.isInner ? window : sessionSafeArea
     }
 }
 
@@ -139,16 +152,16 @@ public enum FoldPose: Equatable, Sendable {
 /// - Cover: the guest is today's phone, 382 points wide. The strip the camera
 ///   keeps beside it holds the side keys, always open in one column, and the
 ///   statistics above them. Notices hang from the guest's top.
-/// - Inner, upright, bent or flat: the guest fills the safe area across both
-///   halves, so the hinge never resizes Android. The keys stay on its edge,
-///   closed until tapped. Bent, the statistics and the notices hang from the
-///   top of the trailing half; flat, from the top of the display, as on an
-///   iPad.
-/// - Inner, turned, flat: the guest fills the safe area, with the keys on its
-///   edge and the statistics and notices at its top, as on an iPad.
+/// - Inner, upright, bent or flat: the guest fills the whole display across
+///   both halves (`FoldReading.sessionGuestArea`), so the hinge never resizes
+///   Android. The keys stay on its edge, closed until tapped. Bent, the
+///   statistics and the notices hang from the top of the trailing half; flat,
+///   from the top of the display, as on an iPad.
+/// - Inner, turned, flat: the guest fills the whole display, with the keys on
+///   its edge and the statistics and notices at its top, as on an iPad.
 /// - Inner, turned, bent (standing like a laptop): the guest takes the upper
 ///   half; the lower half, on the table, is a deck with the keys in one row
-///   and the statistics and notices above them.
+///   and the statistics and notices above them, clear of the home indicator.
 public struct SessionPlan: Equatable, Sendable {
     public enum Keys: Equatable, Sendable {
         /// On the guest's edge, closed until tapped, draggable.
@@ -175,32 +188,37 @@ public struct SessionPlan: Equatable, Sendable {
     public static let sheetClearance: CGFloat = 12
 
     /// Nil where the display does not fold: the session is then laid out as
-    /// it always was.
-    public init?(_ reading: FoldReading) {
+    /// it always was. `wholeInnerDisplay` is Settings' "Use the whole inner
+    /// screen": off, the guest stays above the home indicator's strip, in the
+    /// session's safe area, as it does on an iPhone.
+    public init?(_ reading: FoldReading, wholeInnerDisplay: Bool = true) {
         let pose = reading.pose
         guard pose.folds else { return nil }
         let safe = reading.sessionSafeArea
+        let whole = wholeInnerDisplay ? reading.sessionGuestArea : safe
         switch pose {
         case .plain:
             return nil
         case .cover:
-            guest = safe
+            guest = whole
             hud = safe
             keys = .edge
             if let rail = Self.rail(reading, safe: safe) { keys = .rail(rail) }
         case .upright:
-            guest = safe
+            guest = whole
             keys = .edge
-            hud = pose.spreads ? Self.halves(of: safe, reading: reading)?.second ?? safe : safe
+            hud = pose.spreads ? Self.halves(of: safe, reading: reading)?.second ?? safe : whole
         case .turned:
             if pose.spreads, let halves = Self.halves(of: safe, reading: reading) {
+                // The upper half ends at the fold's band, so the guest is the
+                // same whichever area it is cut from.
                 guest = halves.first
                 keys = .deck(halves.second)
                 hud = halves.second
             } else {
-                guest = safe
+                guest = whole
                 keys = .edge
-                hud = safe
+                hud = whole
             }
         }
     }

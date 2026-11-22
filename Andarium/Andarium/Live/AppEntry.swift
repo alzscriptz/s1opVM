@@ -164,6 +164,8 @@ struct AppEntry {
         let pointer = PointerPreference().launch(automated: !launch.isEmpty)
         model.pointerAsTouch = pointer.isOn
         model.pointerAsTouchDecidedByLaunch = !pointer.keepsChanges
+        // How far the closed side keys fade is the person's last choice.
+        model.sideKeysIdleOpacity = SideKeysPreference().idleOpacity
         // Settings' "When hot" is the person's last choice, unless the launch
         // is a harness's and decides for its run alone (`HeatLimitPreference`).
         let heat = HeatLimitPreference().launch(

@@ -58,13 +58,27 @@ struct alignas(32) TlbEntry final {
 	std::uintptr_t write_data_minus_address{};
 };
 
-/* The table has 16,384 entries, indexed directly by the low bits of the guest
- * page number: a cache line holds two neighbouring pages' 32-byte entries. A
- * direct index never places pages n and n + 1 in one entry, which lets a
- * transfer key its probe by the page of its final byte and find a crossing as
- * a miss. */
+/* The table has 16,384 entries, indexed by adding the next 14 bits of the
+ * guest page number into its low 14 bits: ((page + (page >> 14)) & 0x3fff).
+ * Addition preserves sequential cache-line locality, eliminates 2^26..2^39
+ * power-of-two stride conflicts (notably 2^28-byte Android mappings), never
+ * depends on the top TBI byte (bits 63:56), and guarantees pages n and n + 1
+ * never share an entry (wrapping from 0x3fff to 0 advances the index by 2). */
 inline constexpr std::size_t tlb_index_bits = 14U;
 inline constexpr std::size_t tlb_entry_count = 1U << tlb_index_bits;
+
+[[nodiscard]] constexpr std::size_t tlb_index_for_page(
+	std::uint64_t page) noexcept
+{
+	return static_cast<std::size_t>(
+		(page + (page >> tlb_index_bits)) & (tlb_entry_count - 1U));
+}
+
+[[nodiscard]] constexpr std::size_t tlb_index(
+	std::uint64_t address) noexcept
+{
+	return tlb_index_for_page(address >> DARWIN_UML_GUEST_PAGE_SHIFT);
+}
 /* Entries a flush clears one by one before clearing the whole table is
  * cheaper. A vCPU switching address spaces flushes; after a short run in the
  * other space only a few entries hold anything. */

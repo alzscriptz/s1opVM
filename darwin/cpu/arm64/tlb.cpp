@@ -16,8 +16,7 @@ constexpr std::uint64_t page_size = DARWIN_UML_GUEST_PAGE_SIZE;
 [[nodiscard]] constexpr std::size_t index_for(
 	std::uint64_t address) noexcept
 {
-	const auto page = address >> DARWIN_UML_GUEST_PAGE_SHIFT;
-	return static_cast<std::size_t>(page & (tlb_entry_count - 1));
+	return tlb_index(address);
 }
 
 static_assert(sizeof(TlbEntry) == 32);

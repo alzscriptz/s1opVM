@@ -70,7 +70,9 @@ gadget run_epilogue_\loads\()_\adds
 	b.ne Lrun_epilogue_fallback\@
 	add x16, x17, x9, lsl #3
 	add x11, x16, x10
-	ubfx x9, x16, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	lsr x9, x16, #UML_GADGET_GUEST_PAGE_SHIFT
+	add x9, x9, x9, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	ldp x12, x13, [x10, #UML_GADGET_TLB_ENTRY_READ_PAGE]
 	lsr x11, x11, #UML_GADGET_GUEST_PAGE_SHIFT
@@ -218,7 +220,9 @@ gadget run_prologue_\pairs\()_\single\()_\subs
 	b.ne Lrun_prologue_fallback\@
 	add x16, x17, x9, lsl #3
 	add x11, x16, x10
-	ubfx x9, x16, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	lsr x9, x16, #UML_GADGET_GUEST_PAGE_SHIFT
+	add x9, x9, x9, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	ldp x12, x13, [x10, #UML_GADGET_TLB_ENTRY_WRITE_PAGE]
 	lsr x11, x11, #UML_GADGET_GUEST_PAGE_SHIFT

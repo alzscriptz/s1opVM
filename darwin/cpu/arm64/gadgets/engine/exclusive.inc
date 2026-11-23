@@ -71,7 +71,8 @@
  * the page. Scratch: x8-x12; on exit x8 is the page key and x10 the entry. */
 .macro exclusive_translate miss
 	lsr x8, x7, #UML_GADGET_GUEST_PAGE_SHIFT
-	ubfx x9, x7, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	add x9, x8, x8, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	ldp x11, x12, [x10, #UML_GADGET_TLB_ENTRY_WRITE_PAGE]
 	cmp x8, x11

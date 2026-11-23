@@ -1025,7 +1025,7 @@ std::uint64_t refill(void *tlb_pointer, std::uint64_t address,
 		return 0;
 	}
 	const auto page = address >> DARWIN_UML_GUEST_PAGE_SHIFT;
-	const auto &entry = tlb.entries[page & (::uml::memory::tlb_entry_count - 1)];
+	const auto &entry = tlb.entries[::uml::memory::tlb_index_for_page(page)];
 	const bool filled = (kind == ::uml::memory::Access::write ?
 		entry.write_page : entry.read_page) == page;
 #if UML_AOT_DIAGNOSTICS
@@ -1109,7 +1109,7 @@ void note_refill(const void *tlb_pointer, std::uint64_t address,
 	} else {
 		const auto page = address >> DARWIN_UML_GUEST_PAGE_SHIFT;
 		const auto &entry =
-			tlb.entries[page & (::uml::memory::tlb_entry_count - 1)];
+			tlb.entries[::uml::memory::tlb_index_for_page(page)];
 		const auto same = kind == 1 ? entry.write_page : entry.read_page;
 		const auto other = kind == 1 ? entry.read_page : entry.write_page;
 		constexpr auto empty = ::uml::memory::tlb_empty_key;

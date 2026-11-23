@@ -57,8 +57,9 @@ void JitCompiler::emit_tlb_set(unsigned address) {
      * still relative to the page-aligned address.
      */
     emitter_.ubfm(1, address, page_shift, 63U); // lsr x1, Xn, #page_shift
-    emitter_.ubfm(0, address, page_shift,
-                  page_shift + ::uml::memory::tlb_index_bits - 1U);
+    // add x0, x1, x1, lsr #tlb_index_bits
+    emitter_.emit(0x8b41'0020U | (::uml::memory::tlb_index_bits << 10));
+    emitter_.ubfm(0, 0, 0U, ::uml::memory::tlb_index_bits - 1U);
     emitter_.add_shifted(0, 14, 0, 5);
   }
 

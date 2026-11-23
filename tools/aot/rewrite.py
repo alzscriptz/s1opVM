@@ -1347,9 +1347,9 @@ class Library:
         self.fn_mm.append((offset, "LOAD" if load else "STORE", total, first))
         if flip:
             asm.word(A.add_imm(T1, T0, total - 1))
-            asm.word(A.ubfx(T2, T1, 12, 14))
+            _emit_tlb_index(asm, T2, T1)
         else:
-            asm.word(A.ubfx(T2, T0, 12, 14))
+            _emit_tlb_index(asm, T2, T0)
         asm.word(A.add_reg(T2, TLB, T2, shift=0, amount=5))
         asm.word(A.ldp_x(T1, T2, T2, entry))
         if pair and not short:
@@ -1474,7 +1474,7 @@ class Library:
         asm.word(A.ubfx(T0, host_base, 0, 56))
         entry = 0 if load else 16
         self.fn_mm.append((offset, "LOAD" if load else "STORE", total, False))
-        asm.word(A.ubfx(T2, T0, 12, 14))
+        _emit_tlb_index(asm, T2, T0)
         asm.word(A.add_reg(T2, TLB, T2, shift=0, amount=5))
         asm.word(A.ldp_x(T1, T2, T2, entry))
         asm.word(A.add_reg(T2, T2, T0))
@@ -1531,7 +1531,7 @@ class Library:
             asm.word(A.ubfx(T1, T0, 0, n.bit_length() - 1))
             asm.cbz(T1, self.lab("ST", offset), sf=1, nz=True)
             self.fn_st.append(offset)
-        asm.word(A.ubfx(T2, T0, 12, 14))
+        _emit_tlb_index(asm, T2, T0)
         asm.word(A.add_reg(T2, TLB, T2, shift=0, amount=5))
         asm.word(A.ldp_x(T1, T2, T2, 16 if write else 0))
         asm.word(A.add_reg(T2, T2, T0))
@@ -1771,6 +1771,15 @@ class Library:
 
 
 # ---- the entry and exit routines -----------------------------------------
+
+def _emit_tlb_index(asm: A.Assembler, dst: int, addr: int) -> None:
+    """Compute ((addr >> 12) + (addr >> 26)) & 0x3fff into `dst` (matching
+    uml::memory::tlb_index). Preserves the neighbouring-page invariant and
+    eliminates 2^28-byte stride conflicts without extra scratch registers."""
+    asm.word(A.lsr_imm(dst, addr, 12))
+    asm.word(A.add_reg(dst, dst, dst, shift=1, amount=14))
+    asm.word(A.ubfx(dst, dst, 0, 14))
+
 
 def _entry16_jump(asm: A.Assembler, library: "Library", off: int, table: int,
                   page: int, none: str | None = None) -> None:
@@ -2149,7 +2158,7 @@ def emit_mops_thunks(asm: A.Assembler, library: "Library") -> None:
             asm.word(A.add_imm(T2, T2, 1, sub=True))
             asm.word(A.lsr_imm(T2, T2, 12))
             asm.cbz(T2, slow2, nz=True)
-            asm.word(A.ubfx(c, pointer, 12, 14))
+            _emit_tlb_index(asm, c, pointer)
             asm.word(A.add_reg(c, TLB, c, shift=0, amount=5))
             asm.word(A.ldp_x(e, c, c, entry))
             asm.word(A.eor_reg(e, e, pointer, shift=1, amount=12))

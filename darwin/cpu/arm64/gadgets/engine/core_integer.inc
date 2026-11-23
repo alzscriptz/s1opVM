@@ -101,7 +101,8 @@ CSYM(uml_arm64_gadget_\name):
 .macro translate access, page_offset, forward=0, fault=uml_arm64_gadget_memory_fault
 	/* Entries are keyed by guest page number (address >> page shift). */
 	lsr x8, x7, #UML_GADGET_GUEST_PAGE_SHIFT
-	ubfx x9, x7, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	add x9, x8, x8, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	/* Each access-specific tag is paired with its backing delta, so the
 	 * successful way needs one cache-line-local load pair and no later load. */
@@ -167,7 +168,9 @@ Ltbi_strip_done\@:
 	.if \bytes > 1
 	add x8, \address, #(\bytes - 1)
 	.endif
-	ubfx x9, \address, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	lsr x9, \address, #UML_GADGET_GUEST_PAGE_SHIFT
+	add x9, x9, x9, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	ldp x11, x12, [x10, #\page_offset]
 	.if \bytes > 1

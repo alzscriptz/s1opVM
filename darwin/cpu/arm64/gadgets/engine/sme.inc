@@ -224,7 +224,8 @@ CSYM(uml_arm64_gadget_enter_streaming):
 	lsr x8, x8, #UML_GADGET_GUEST_PAGE_SHIFT
 	cbnz x8, \slow
 	lsr x8, \address, #UML_GADGET_GUEST_PAGE_SHIFT
-	ubfx x9, \address, #UML_GADGET_GUEST_PAGE_SHIFT, #UML_GADGET_TLB_INDEX_BITS
+	add x9, x8, x8, lsr #UML_GADGET_TLB_INDEX_BITS
+	ubfx x9, x9, #0, #UML_GADGET_TLB_INDEX_BITS
 	add x10, _swtlb, x9, lsl #UML_GADGET_TLB_SET_SHIFT
 	.if \access
 	ldp x11, x12, [x10, #UML_GADGET_TLB_ENTRY_WRITE_PAGE]

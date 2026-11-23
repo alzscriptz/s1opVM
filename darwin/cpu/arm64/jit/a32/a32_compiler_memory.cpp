@@ -42,8 +42,9 @@ constexpr unsigned writeback_m = 1;
 
 void A32Compiler::emit_tlb_index(unsigned address) {
   emitter_.ubfm(1, address, page_shift, 63U); // lsr x1, Xn, #page_shift
-  emitter_.ubfm(0, address, page_shift,
-                page_shift + ::uml::memory::tlb_index_bits - 1U);
+  // add x0, x1, x1, lsr #tlb_index_bits
+  emitter_.emit(0x8b41'0020U | (::uml::memory::tlb_index_bits << 10));
+  emitter_.ubfm(0, 0, 0U, ::uml::memory::tlb_index_bits - 1U);
   emitter_.add_shifted(0, 14, 0, 5);
 }
 
@@ -75,8 +76,10 @@ void A32Compiler::emit_translate(unsigned address, Access access,
   /* The index is the page number's low bits, extracted from the address, and
    * the tag compare shifts the address itself: one instruction fewer than
    * emit_tlb_index and a compare. */
-  emitter_.ubfm(0, address, page_shift,
-                page_shift + ::uml::memory::tlb_index_bits - 1U);
+  emitter_.ubfm(0, address, page_shift, 63U); // lsr x0, Xn, #page_shift
+  // add x0, x0, x0, lsr #tlb_index_bits
+  emitter_.emit(0x8b40'0000U | (::uml::memory::tlb_index_bits << 10));
+  emitter_.ubfm(0, 0, 0U, ::uml::memory::tlb_index_bits - 1U);
   emitter_.add_shifted(0, 14, 0, 5);
   emitter_.load_pair_x(2, 9, 0, page_offset);
   emitter_.emit(0xca40'0042U | (page_shift << 10) |

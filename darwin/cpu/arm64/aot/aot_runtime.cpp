@@ -1172,25 +1172,49 @@ void note_refill(const void *tlb_pointer, std::uint64_t address,
  * native code of the verified instance that holds it, or none. */
 Target lookup(const CrossTable *table, std::uint64_t address) noexcept
 {
-	for (std::uint64_t index = 0; index < table->count; ++index) {
-		const auto &entry = table->entries[index];
-		if (address < entry.low || address >= entry.high)
-			continue;
+	auto resolve_entry = [&](const CrossEntry &entry) noexcept -> Target {
 		const auto library = directory().library(entry.library);
 		const std::uint64_t offset = address - entry.bias;
 		if ((offset & 3U) != 0)
-			break;
+			return {};
 		/* The target's text page must have matched its stored hash; a
 		 * page not yet verified ends the entry at the branch, and the
 		 * host verifies it before the next one. */
 		if (entry.pages[(offset - library.table_base) / page_size] == 0)
-			break;
+			return {};
 		const auto native =
 			native_entry(library, (offset - library.table_base) / 4);
 		if (native == 0)
-			break;
+			return {};
 		UML_AOT_COUNT(cross_hits, 1);
 		return {uml_aot_blob + library.unit_offset + native, &entry};
+	};
+	/* One-slot per-thread MRU hint avoids linear scans on hot cross-library
+	 * ping-pong calls (e.g. libart <-> libc) without changing CrossTable ABI. */
+	thread_local const CrossTable *last_table = nullptr;
+	thread_local std::uint64_t last_index = 0;
+	const auto count = table->count;
+	if (table == last_table && last_index < count) {
+		const auto &entry = table->entries[last_index];
+		if (address >= entry.low && address < entry.high) {
+			if (const auto hit = resolve_entry(entry); hit.native != nullptr)
+				return hit;
+			UML_AOT_COUNT(cross_misses, 1);
+#if UML_AOT_DIAGNOSTICS
+			note_cross_miss(table, address);
+#endif
+			return {};
+		}
+	}
+	for (std::uint64_t index = 0; index < count; ++index) {
+		const auto &entry = table->entries[index];
+		if (address < entry.low || address >= entry.high)
+			continue;
+		last_table = table;
+		last_index = index;
+		if (const auto hit = resolve_entry(entry); hit.native != nullptr)
+			return hit;
+		break;
 	}
 	UML_AOT_COUNT(cross_misses, 1);
 #if UML_AOT_DIAGNOSTICS

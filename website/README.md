@@ -17,4 +17,4 @@ The website files are openly available in this repository. Maintainer credit: **
 - `app.js`: step navigation and user-confirmed VPN state
 
 ## License
-See the repository license. All original website source is open for inspection.
+This repository's root LICENSE is **GNU GPL v2**; the website source is included under the repository's license. See [LICENSE](../LICENSE).

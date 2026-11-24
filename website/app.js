@@ -1,0 +1,4 @@
+const checkBtn=document.querySelector('#check');const pairBtn=document.querySelector('#pair');const status=document.querySelector('#status');const statusTitle=status.querySelector('strong');const statusText=status.querySelector('small');let connected=false;
+checkBtn.addEventListener('click',async()=>{checkBtn.disabled=true;checkBtn.querySelector('span').textContent='Checking…';statusTitle.textContent='Checking local companion';statusText.textContent='This demo does not probe devices or tunnels automatically.';
+await new Promise(r=>setTimeout(r,700));connected=false;status.classList.remove('active');statusTitle.textContent='LocalDevVPN companion not detected';statusText.textContent='No native companion is connected. Pairing is a visual demo only.';pairBtn.disabled=true;pairBtn.textContent='Native companion required';checkBtn.disabled=false;checkBtn.querySelector('span').textContent='Check again';});
+pairBtn.addEventListener('click',()=>{if(!connected)return;});

@@ -35,8 +35,7 @@ h1 em,h2 em,.below h3 em{font-style:normal;color:var(--lime)}
 .rail-icon svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .rail-step b{display:block;font-size:11px;font-weight:700}.rail-step small{display:block;font-size:10px;color:#778079;margin-top:3px}
 .rail-number{margin-left:auto;font:10px 'DM Mono',monospace;color:#69736c}
-.rail-step.current .rail-number{color:var(--lime}
-).replace("color:var(--lime\n)","color:var(--lime)")
+.rail-step.current .rail-number{color:var(--lime)}
 .rail-note{margin-top:auto;padding:14px 9px 0;border-top:1px solid #282f2a;display:flex;gap:8px;font-size:10px;line-height:1.55;color:#7f8982}
 .note-icon{color:var(--lime);font-size:14px}
 .main-panel{padding:30px 40px 22px;min-height:520px;display:flex;flex-direction:column}

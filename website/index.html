@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#0a0c12"/><title>s1op Installer — Private device setup</title>
+<link rel="stylesheet" href="styles.css"/>
+</head>
+<body>
+<div class="shell">
+<header><a class="brand" href="#"><span class="brandmark">s</span><span>s1op<span class="muted"> installer</span></span></a><nav><a href="#how">How it works</a><a href="#about">Runtime</a></nav><span class="pill"><i></i> local-first</span></header>
+<main>
+<section class="hero">
+<div class="eyebrow"><span class="spark">✦</span> Open Minis Fetch · Device setup</div>
+<h1>Install. Pair.<br/><span>Stay in control.</span></h1>
+<p class="lead">A clean setup companion for your local development VPN and device pairing workflow. No Apple ID credentials collected here.</p>
+<div class="hero-actions"><button id="check" class="primary"><span>Check LocalDevVPN</span><span>↗</span></button><a class="secondary" href="#how">Explore setup <span>↓</span></a></div>
+<div class="status" id="status"><div class="status-icon">⌁</div><div><strong>LocalDevVPN not checked</strong><small>Check your local companion before pairing.</small></div><span class="status-dot"></span></div>
+</section>
+<section class="panel" id="how">
+<div class="panel-head"><div><div class="eyebrow">Setup flow</div><h2>Connect your device</h2></div><span class="steps">01 — 03</span></div>
+<div class="steps-grid">
+<article class="step"><span class="num">01</span><div class="step-icon">⌘</div><h3>Check your tunnel</h3><p>Verify your local developer VPN companion is active before continuing.</p><span class="tag">LocalDevVPN</span></article>
+<article class="step"><span class="num">02</span><div class="step-icon">◈</div><h3>Enable Developer Mode</h3><p>On your iPhone, open Settings → Privacy & Security → Developer Mode. Follow Apple's on-device prompts.</p><span class="tag">On-device</span></article>
+<article class="step"><span class="num">03</span><div class="step-icon">⇄</div><h3>Pair & install</h3><p>Pair with your trusted installer on the same network and use the code shown on your device.</p><span class="tag">Pairing</span></article>
+</div>
+</section>
+<section class="pair-card">
+<div class="pair-left"><div class="eyebrow">Device pairing</div><h2>Ready when<br/>you are.</h2><p>Pairing requires the native s1op companion. This browser demo shows the pairing UI only and cannot install apps by itself.</p><button id="pair" class="primary pair-btn" disabled>Check VPN to unlock pairing</button><small class="note">Never enter Apple ID passwords or verification codes on this website.</small></div>
+<div class="pair-right"><div class="device"><div class="device-top"><span>‹</span><span>Pair device</span><span>•••</span></div><div class="phone-icon">▣</div><h3 id="pairTitle">Waiting for local companion</h3><p id="pairDesc">Connect LocalDevVPN to begin.</p><div class="code" id="code"><span>—</span><span>—</span><span>—</span><span>—</span></div><small id="codeLabel">Pairing code will appear here</small></div></div>
+</section>
+<section class="footer-grid" id="about"><div><div class="eyebrow">Under the hood</div><h2>Native performance.<br/>Open source roots.</h2><p>Inspired by Kernarium’s approach to running Linux natively on iOS with a user-mode kernel and accelerated userspace. This site is a setup UI—not an iPhone emulator.</p><a class="repo-link" href="https://github.com/imxieyi/Kernarium" target="_blank" rel="noreferrer">Explore Kernarium on GitHub ↗</a></div><div class="feature-list"><div><span>01</span><strong>Local-first status</strong><small>Checks are intended to run through a local companion.</small></div><div><span>02</span><strong>Pairing transparency</strong><small>Device pairing is clearly shown before installation.</small></div><div><span>03</span><strong>Privacy by design</strong><small>Credentials stay with Apple’s own installation flow.</small></div></div></section>
+</main><footer><span>© s1op Installer</span><span>Experimental UI · Not an installer yet</span></footer>
+</div>
+<script src="app.js"></script>
+</body></html>

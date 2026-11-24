@@ -1,35 +1,39 @@
 <!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="theme-color" content="#0a0c12"/><title>s1op Installer — Private device setup</title>
-<link rel="stylesheet" href="styles.css"/>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080b11"><meta name="description" content="s1op setup wizard — open-source device setup companion">
+<title>s1op · Setup</title><link rel="stylesheet" href="styles.css">
 </head>
 <body>
+<div class="ambient a1"></div><div class="ambient a2"></div>
 <div class="shell">
-<header><a class="brand" href="#"><span class="brandmark">s</span><span>s1op<span class="muted"> installer</span></span></a><nav><a href="#how">How it works</a><a href="#about">Runtime</a></nav><span class="pill"><i></i> local-first</span></header>
+<header class="topbar"><a class="brand" href="#"><span class="logo">s1</span><span>s1op <small>SETUP</small></span></a><a class="source-link" href="https://github.com/alzscriptz/s1opVM" target="_blank" rel="noreferrer">Open source ↗</a></header>
 <main>
-<section class="hero">
-<div class="eyebrow"><span class="spark">✦</span> Open Minis Fetch · Device setup</div>
-<h1>Install. Pair.<br/><span>Stay in control.</span></h1>
-<p class="lead">A clean setup companion for your local development VPN and device pairing workflow. No Apple ID credentials collected here.</p>
-<div class="hero-actions"><button id="check" class="primary"><span>Check LocalDevVPN</span><span>↗</span></button><a class="secondary" href="#how">Explore setup <span>↓</span></a></div>
-<div class="status" id="status"><div class="status-icon">⌁</div><div><strong>LocalDevVPN not checked</strong><small>Check your local companion before pairing.</small></div><span class="status-dot"></span></div>
-</section>
-<section class="panel" id="how">
-<div class="panel-head"><div><div class="eyebrow">Setup flow</div><h2>Connect your device</h2></div><span class="steps">01 — 03</span></div>
-<div class="steps-grid">
-<article class="step"><span class="num">01</span><div class="step-icon">⌘</div><h3>Check your tunnel</h3><p>Verify your local developer VPN companion is active before continuing.</p><span class="tag">LocalDevVPN</span></article>
-<article class="step"><span class="num">02</span><div class="step-icon">◈</div><h3>Enable Developer Mode</h3><p>On your iPhone, open Settings → Privacy & Security → Developer Mode. Follow Apple's on-device prompts.</p><span class="tag">On-device</span></article>
-<article class="step"><span class="num">03</span><div class="step-icon">⇄</div><h3>Pair & install</h3><p>Pair with your trusted installer on the same network and use the code shown on your device.</p><span class="tag">Pairing</span></article>
+<section class="intro"><div class="eyebrow"><span class="live-dot"></span> DEVICE SETUP WIZARD</div><h1>Let's get you<br><span>connected.</span></h1><p>Four quick steps. Follow along and we'll guide you through the setup.</p></section>
+<section class="wizard glass">
+<div class="wizard-head"><div class="progress-track"><span id="progress"></span></div><div class="step-meta"><span id="stepLabel">STEP 01 OF 04</span><span id="stepName">LocalDevVPN</span></div></div>
+<div class="wizard-body">
+<div class="step-view active" id="step0">
+<div class="icon-orb vpn-orb"><span>⌁</span></div><h2>Checking LocalDevVPN</h2><p class="desc">First, confirm your LocalDevVPN connection. Web browsers can't safely verify your private tunnel directly, so use the companion's status and confirm here.</p>
+<div class="status-box" id="vpnStatus"><span class="status-led"></span><div><b>Connection needs confirmation</b><small>Check LocalDevVPN on your device</small></div></div>
+<div class="actions"><a class="button secondary" href="https://github.com/alzscriptz/s1opVM" target="_blank" rel="noreferrer">Get LocalDevVPN ↗</a><button class="button primary" id="vpnConfirm">I'm connected — continue <span>→</span></button></div>
 </div>
-</section>
-<section class="pair-card">
-<div class="pair-left"><div class="eyebrow">Device pairing</div><h2>Ready when<br/>you are.</h2><p>Pairing requires the native s1op companion. This browser demo shows the pairing UI only and cannot install apps by itself.</p><button id="pair" class="primary pair-btn" disabled>Check VPN to unlock pairing</button><small class="note">Never enter Apple ID passwords or verification codes on this website.</small></div>
-<div class="pair-right"><div class="device"><div class="device-top"><span>‹</span><span>Pair device</span><span>•••</span></div><div class="phone-icon">▣</div><h3 id="pairTitle">Waiting for local companion</h3><p id="pairDesc">Connect LocalDevVPN to begin.</p><div class="code" id="code"><span>—</span><span>—</span><span>—</span><span>—</span></div><small id="codeLabel">Pairing code will appear here</small></div></div>
-</section>
-<section class="footer-grid" id="about"><div><div class="eyebrow">Under the hood</div><h2>Native performance.<br/>Open source roots.</h2><p>Inspired by Kernarium’s approach to running Linux natively on iOS with a user-mode kernel and accelerated userspace. This site is a setup UI—not an iPhone emulator.</p><a class="repo-link" href="https://github.com/imxieyi/Kernarium" target="_blank" rel="noreferrer">Explore Kernarium on GitHub ↗</a></div><div class="feature-list"><div><span>01</span><strong>Local-first status</strong><small>Checks are intended to run through a local companion.</small></div><div><span>02</span><strong>Pairing transparency</strong><small>Device pairing is clearly shown before installation.</small></div><div><span>03</span><strong>Privacy by design</strong><small>Credentials stay with Apple’s own installation flow.</small></div></div></section>
-</main><footer><span>© s1op Installer</span><span>Experimental UI · Not an installer yet</span></footer>
+<div class="step-view" id="step1">
+<div class="visual pair-visual"><div class="phone"><div class="notch"></div><div class="phone-caption">s1op companion</div><div class="phone-symbol">◈</div><strong>Pair device</strong><span>Waiting for connection…</span><div class="pair-code"><i>4</i><i>8</i><i>2</i><i>1</i></div></div><div class="pair-arrow">↔</div><div class="desktop-card"><div class="mini-dot"></div><b>Trusted connection</b><small>Same network · LocalDevVPN</small></div></div>
+<h2>Pair your devices</h2><p class="desc">Open the s1op companion on your iPhone and choose Pair. Make sure both devices are connected to your trusted LocalDevVPN network. Follow the companion's prompts; don't share pairing codes with anyone.</p>
+<div class="actions"><button class="button secondary" id="back1">← Back</button><button class="button primary" id="next1">I've paired my device <span>→</span></button></div>
 </div>
-<script src="app.js"></script>
-</body></html>
+<div class="step-view" id="step2">
+<div class="icon-orb apple-orb"><span></span></div><h2>Apple ID & signing</h2><p class="desc">The installer may ask you to sign in with your Apple ID for app signing. Sign in only in the official Apple prompt or trusted installation app. This site never asks for your password, recovery key, or verification code.</p><div class="callout"><b>Keep your account safe</b><span>Don't type Apple ID credentials into this webpage or send them to anyone.</span></div>
+<div class="actions"><button class="button secondary" id="back2">← Back</button><button class="button primary" id="next2">Continue to install <span>→</span></button></div>
+</div>
+<div class="step-view" id="step3">
+<div class="icon-orb install-orb"><span>↓</span></div><h2>Install s1op</h2><p class="desc">Use the open-source installer release and follow the on-device instructions to complete installation. The browser wizard doesn't install or sign an IPA by itself.</p><div class="callout"><b>Open source</b><span>Review the source, releases, and install instructions before running anything.</span></div><div class="actions"><button class="button secondary" id="back3">← Back</button><a class="button primary" href="https://github.com/alzscriptz/s1opVM" target="_blank" rel="noreferrer">Get s1op from GitHub ↗</a></div>
+</div>
+</div>
+<div class="wizard-foot"><button id="reset" class="text-button">Restart wizard</button><span>Open source · Privacy first</span></div>
+</section>
+<section class="about"><div class="about-card glass"><span class="eyebrow">PROJECT NOTES</span><h3>Built in the open.</h3><p>Website and setup UI are open source. Android VM performance is a separate engineering challenge: game speed depends on the virtualization/emulation architecture, GPU translation, memory and device support. This wizard does not promise iPhone-native Android gaming performance.</p><a href="https://github.com/alzscriptz/s1opVM" target="_blank" rel="noreferrer">View repository and source ↗</a></div><div class="credits"><span>Created & maintained by <b>ales04718</b></span><span>Community project · Experimental</span></div></section>
+</main>
+</div><script src="app.js"></script></body></html>
